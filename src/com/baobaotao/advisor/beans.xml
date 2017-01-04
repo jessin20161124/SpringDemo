@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:context="http://www.springframework.org/schema/context"  
+ xmlns:p="http://www.springframework.org/schema/p"  
+ xmlns:mvc="http://www.springframework.org/schema/mvc"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+ xsi:schemaLocation="http://www.springframework.org/schema/beans  
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+      http://www.springframework.org/schema/context  
+      http://www.springframework.org/schema/context/spring-context.xsd  
+      http://www.springframework.org/schema/mvc  
+      http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+     <bean id="waiterTarget" class="com.baobaotao.advisor.Waiter"/>
+     <bean id="sellerTarget" class="com.baobaotao.advisor.Seller"/>
+     <bean id="greetingAdvice" class="com.baobaotao.advice.GreetingBeforeAdvice"/>
+     <!--静态方法配置切面-->
+     <bean id="greetingAdvisor" class="com.baobaotao.advisor.GreetingAdvisor"
+               p:advice-ref="greetingAdvice"
+           />
+     <bean id="parent" abstract="true"
+            class="org.springframework.aop.framework.ProxyFactoryBean"
+            p:interceptorNames="greetingAdvisor"
+            p:proxyTargetClass="true"
+           />
+     <!-- 两个子bean将继承父bean的所有属性，父bean抽取了共同的属性，两个真正的代理-->
+     <bean id="waiter" parent="parent" p:target-ref="waiterTarget"/>
+     <bean id="seller" parent="parent" p:target-ref="sellerTarget"/>
+
+     <!-- 静态正则表达式方法匹配切面 -->
+     <bean id="regexpAdvisor"
+            class="org.springframework.aop.support.RegexpMethodPointcutAdvisor"
+             p:advice-ref="greetingAdvice">
+          <!-- 正则表达式匹配，数组 -->
+          <property name="patterns">
+               <list>
+                    <value>.*greet.*</value>
+                    <value>.*serve.*</value>
+               </list>
+          </property>
+     </bean>
+     <!-- 只代理waiter实例-->
+     <bean id="waiter1" class="org.springframework.aop.framework.ProxyFactoryBean"
+            p:interceptorNames="regexpAdvisor"
+            p:target-ref="waiterTarget"
+            p:proxyTargetClass="true"
+           />
+
+     <!-- 动态切面 -->
+     <bean id="dynamicAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+          <!-- 设置pointcut属性，这个pointcut属性是自己实现的，是动态切面的关键 -->
+          <property name="pointcut">
+               <bean class="com.baobaotao.advisor.GreetingDynamicPointcut"/>
+          </property>
+          <!-- 前向增强 -->
+          <property name="advice">
+               <bean class="com.baobaotao.advice.GreetingBeforeAdvice"/>
+          </property>
+     </bean>
+     <!-- 创建动态实例 -->
+     <bean id="waiter2" class="org.springframework.aop.framework.ProxyFactoryBean"
+               p:interceptorNames="dynamicAdvisor"
+               p:target-ref="waiterTarget"
+               p:proxyTargetClass="true"
+           />
+
+     <!-- 流程切面代理 -->
+     <!-- 指定切点操作的类和方法-->
+     <bean id="controlFlowPointcut" class="org.springframework.aop.support.ControlFlowPointcut">
+          <constructor-arg type="java.lang.Class" value="com.baobaotao.advisor.WaiterDelegate"/>
+          <constructor-arg type="java.lang.String" value="service"/>
+     </bean>
+     <!-- 含有切点和增强，构成一个流程切面 -->
+     <bean id="controlFlowAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor"
+            p:pointcut-ref="controlFlowPointcut"
+            p:advice-ref="greetingAdvice"
+           />
+     <!-- interceptNames都是一个切面 -->
+     <bean id="waiter3" class="org.springframework.aop.framework.ProxyFactoryBean"
+            p:interceptorNames="controlFlowAdvisor"
+            p:target-ref="waiterTarget"
+            p:proxyTargetClass="true"
+           />
+
+
+     <!-- 复合切点 -->
+     <bean id="gcp" class="com.baobaotao.advisor.GreetingComposablePointcut"/>
+     <!-- 注意这里是-=   -->
+     <bean id="composableAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor"
+            p:pointcut-="#{gcp.intersectionPointcut}"
+            p:advice-ref="greetingAdvice"
+           />
+     <!-- 代理实例需要切面和被代理的对象 -->
+     <bean id="waiter4" class="org.springframework.aop.framework.ProxyFactoryBean"
+            p:interceptorNames="composableAdvisor"
+            p:target-ref="waiterTarget"
+            p:proxyTargetClass="true"
+           />
+
+     <!-- 引介切面 -->
+     <bean id="introduceAdvisor" class="org.springframework.aop.support.DefaultIntroductionAdvisor">
+          <constructor-arg>
+               <bean class="com.baobaotao.introduce.ControllablePerforumanceMonitor"/>
+          </constructor-arg>
+     </bean>
+     <bean id="forumServiceTarget" class="com.baobaotao.proxy.ForumServiceImpl"/>
+     <bean id="forumService" class="org.springframework.aop.framework.ProxyFactoryBean"
+            p:interceptorNames="introduceAdvisor"
+            p:target-ref="forumServiceTarget"
+            p:proxyTargetClass="true"
+           />
+</beans> 
