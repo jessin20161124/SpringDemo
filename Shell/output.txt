@@ -1,0 +1,25 @@
+total 68
+Line one line two
+Line one line two
+Line one line two
+Line one line two
+Line one line two
+Line one line two
+-rw-rw-r-- 1 gzx gzx 273 10月 29 21:43 hello.txt
+-rw-rw-r-- 1 gzx gzx 331 10月 29 21:45 hello.txt.save
+-rwxrw-r-- 1 gzx gzx 166 10月 29 15:44 myfuncs
+-rwxrw-r-- 1 gzx gzx 166 10月 29 15:44 myfuncs~
+-rw-rw-r-- 1 gzx gzx   0 10月 29 22:04 output.txt
+-rw-rw-r-- 1 gzx gzx 513 10月 29 22:01 test
+-rw-rw-r-- 1 gzx gzx 216 10月 29 13:56 test~
+-rwxrw-r-- 1 gzx gzx 260 10月 29 14:05 test1.sh
+-rwxrw-r-- 1 gzx gzx 260 10月 29 14:05 test1.sh~
+-rwxrw-r-- 1 gzx gzx 309 10月 29 14:59 test2.sh
+-rwxrw-r-- 1 gzx gzx 307 10月 29 14:45 test2.sh~
+-rwxrw-r-- 1 gzx gzx 472 10月 29 14:59 test3.sh
+-rwxrw-r-- 1 gzx gzx 472 10月 29 14:59 test3.sh~
+-rwxrw-r-- 1 gzx gzx 258 10月 29 15:16 test4.sh
+-rw-rw-r-- 1 gzx gzx 158 10月 29 15:14 test4.sh~
+-rwxrw-r-- 1 gzx gzx 322 10月 29 15:42 test5.sh
+-rwxrw-r-- 1 gzx gzx 322 10月 29 15:42 test5.sh~
+-rwxrw-r-- 1 gzx gzx 180 10月 29 13:38 test.py~
